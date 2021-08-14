@@ -1,9 +1,9 @@
-package java;
+package src.main.java;
 
 public class FlightRoutesCalculatorView {
     // View layer
 
-    public void printCalculatorDetails(String FlightId, String Airline, int Price){
+    public void printCalculatorDetails(int FlightId, String Airline, int Price){
         System.out.println("Flight route details ");
         System.out.println("Flight id: " + FlightId);
         System.out.println("Flight id: " + Airline);

@@ -1,4 +1,14 @@
-package java;
+package src.main.java;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class FlightRoutesCalculatorController {
     // Controller layer
@@ -6,13 +16,36 @@ public class FlightRoutesCalculatorController {
     private FlightRoutesCalculator model;
     private FlightRoutesCalculatorView view;
 
+    private String ApiUrl = "http://www.mocky.io/v2/5cebcb7d330000cc296d7772";
+
     public FlightRoutesCalculatorController(FlightRoutesCalculator model, FlightRoutesCalculatorView view){
         this.model = model;
         this.view = view;
     }
 
+    public void fetchData(){
+
+        try {
+            var client = HttpClient.newHttpClient();
+            var request = HttpRequest.newBuilder(
+                            URI.create(ApiUrl))
+                    .header("accept", "application/json")
+                    .build();
+
+            var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+            // System.out.println(response.body());
+            JsonObject jsonObject = new JsonParser().parse(response.body()).getAsJsonObject();
+            System.out.println(jsonObject);
+
+        } catch (IOException | InterruptedException e){
+            // timeout, api address non-existent, etc. exceptions
+            e.printStackTrace();
+        }
+    }
+
     // getters...
-    public String getFlightId(){
+    public int getFlightId(){
         return model.getFlightId();
     }
 

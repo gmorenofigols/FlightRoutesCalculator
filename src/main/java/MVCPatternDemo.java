@@ -1,4 +1,4 @@
-package java;
+package src.main.java;
 
 public class MVCPatternDemo {
     public static void main(String[] arg){
@@ -7,14 +7,15 @@ public class MVCPatternDemo {
         FlightRoutesCalculatorController controller = new FlightRoutesCalculatorController(model, view);
 
         controller.updateView();
-        controller.setAirline('Travelling');
-        controller.updateView();
+        controller.fetchData();
     }
 
     private static FlightRoutesCalculator retrieveFlightRoutesCalculatorFromDb(){
         FlightRoutesCalculator flight = new FlightRoutesCalculator();
-        flight.setFlightId(1),
-        flight.setAirline('Vueling');
+        flight.setFlightId(1);
+        flight.setAirline("Vueling");
         flight.setPrice(15);
+
+        return flight;
     }
 }
