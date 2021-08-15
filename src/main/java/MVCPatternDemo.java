@@ -13,6 +13,7 @@ public class MVCPatternDemo {
         controller.fetchData("");
         // controller.fetchData(mockupUrl);
         controller.showAllFlightsView();
+        // controller.showFlightRoutesView('a');
 
         int i;
         for(i=1;i<6;i++){

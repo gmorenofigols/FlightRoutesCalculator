@@ -125,6 +125,10 @@ public class FlightRoutesCalculatorController {
         return getModel().getOutBoundFlights();
     }
 
+    public LinkedList<FlightRoute.Flight> getResults() {
+        return results;
+    }
+
     public LinkedList<FlightRoute.Flight> getInBoundFlights(){
         return getModel().getInBoundFlights();
     }

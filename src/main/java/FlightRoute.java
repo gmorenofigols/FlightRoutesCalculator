@@ -24,18 +24,18 @@ public class FlightRoute {
     }
 
     public Flight getFlightById(int id){
-        // TODO: fix return null.
+        /*  Returns Flight object. The object can be empty. */
 
         Iterator<Flight> i = OutBoundFlights.iterator();
+        Flight f = new Flight();
         while(i.hasNext()) {
-            Flight f = i.next();
-            if(f.getFlightId() == id){
-                return f;
+            Flight thisFlight = i.next();
+            if(thisFlight.getFlightId() == id){
+                f = thisFlight;
             }
         }
-        return null;
+        return f;
     }
-
 
     public void sortByPrice(LinkedList<Flight> list){
         /* Sorts from lowest to highest price from Flight.Price. */
