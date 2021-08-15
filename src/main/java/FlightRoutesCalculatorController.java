@@ -5,75 +5,82 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.Map;
 
-import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 public class FlightRoutesCalculatorController {
     // Controller layer
 
-    private FlightRoutesCalculator model;
+    private FlightRoute model;
     private FlightRoutesCalculatorView view;
 
-    private String ApiUrl = "http://www.mocky.io/v2/5cebcb7d330000cc296d7772";
+    private final String BaseUrl = "http://www.mocky.io/";
+    private String FlightsUrl = "v2/5cebcb7d330000cc296d7772";
 
-    public FlightRoutesCalculatorController(FlightRoutesCalculator model, FlightRoutesCalculatorView view){
+    public FlightRoutesCalculatorController(FlightRoute model, FlightRoutesCalculatorView view){
         this.model = model;
         this.view = view;
     }
 
     public void fetchData(){
+        /* Workflow for http GET from API */
 
+        JsonObject jsonObject = apiGetData();
+        apiProcessGetData(jsonObject);
+    }
+
+    public JsonObject apiGetData(){
         try {
             var client = HttpClient.newHttpClient();
             var request = HttpRequest.newBuilder(
-                            URI.create(ApiUrl))
+                            URI.create(BaseUrl + FlightsUrl))
                     .header("accept", "application/json")
                     .build();
 
             var response = client.send(request, HttpResponse.BodyHandlers.ofString());
-
-            // System.out.println(response.body());
-            JsonObject jsonObject = new JsonParser().parse(response.body()).getAsJsonObject();
-            System.out.println(jsonObject);
+            return new JsonParser().parse(response.body()).getAsJsonObject();
 
         } catch (IOException | InterruptedException e){
             // timeout, api address non-existent, etc. exceptions
             e.printStackTrace();
+            return null;
         }
     }
 
-    // getters...
-    public int getFlightId(){
-        return model.getFlightId();
-    }
+    public void apiProcessGetData(JsonObject jsonObject){
+        //TODO: refactor Flight to Builder pattern.
 
-    public String getAirline(){
-        return model.getAirline();
-    }
+        for(Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
+            JsonArray flightsArray = entry.getValue().getAsJsonArray();
+            String key = entry.getKey();
 
-    public int getPrice(){
-        return model.getPrice();
-    }
-    //... end getters
+            for (int i = 0; i < flightsArray.size(); i++) {
+                JsonObject flightDetails = flightsArray.get(i).getAsJsonObject();
 
-    // setters...
-    public void setFlightId(int flightId){
-        model.setFlightId(flightId);
-    }
+                FlightRoute.Flight Flight = new FlightRoute.Flight();
+                Flight.setFlightId(flightDetails.get("id").getAsInt());
+                Flight.setAirline(flightDetails.get("airline").toString());
+                Flight.setDepartureAirportCode(flightDetails.get("departureAirportCode").toString());
+                Flight.setArrivalAirportCode(flightDetails.get("arrivalAirportCode").toString());
+                Flight.setPrice(flightDetails.get("price").getAsInt());
+                Flight.setIsOutBound(key.contains("outboundFlights"));
 
-    public void setAirline(String airline){
-        model.setAirline(airline);
+                model.add(Flight);
+            }
+        }
     }
-
-    public void setPrice(int price){
-        model.setPrice(price);
-    }
-    //... end setters
 
     public void updateView(){
-        view.printCalculatorDetails(model.getFlightId(), model.getAirline(), model.getPrice());
+        view.printFlightRouteDetails(model);
     }
 
+    public void showFlightRoutesView(int id){
+        FlightRoute.Flight f = model.getFlightById(id);
+        model.flightRoutesCalculator(f);
+        view.printFlightRoute(f, model);
+    }
 }
