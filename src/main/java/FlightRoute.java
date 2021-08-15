@@ -1,5 +1,6 @@
 package src.main.java;
 
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -9,7 +10,6 @@ public class FlightRoute {
     private LinkedList<Flight> AllFlights = new LinkedList<>();
     private LinkedList<Flight> InBoundFlights = new LinkedList<>();
     private LinkedList<Flight> OutBoundFlights = new LinkedList<>();
-    private LinkedList<Flight> results = new LinkedList<>();
 
     public FlightRoute() {
     }
@@ -21,26 +21,6 @@ public class FlightRoute {
             OutBoundFlights.add(flight);
         else
             InBoundFlights.add(flight);
-    }
-
-    public void calculations(){
-        /* takes into consideration only same airport destinations, not countries (requirement!).
-           TODO: check when airline does not match. */
-
-        for(Flight o: OutBoundFlights){
-            LinkedList<Flight> f = new LinkedList<>();
-            for(Flight i: InBoundFlights){
-                if(o.getAirline().equalsIgnoreCase(i.getAirline())){
-                    // checks departure locations are the same
-                    if(o.getDepartureAirportCode().equalsIgnoreCase(i.getArrivalAirportCode()) &&
-                            o.getArrivalAirportCode().equalsIgnoreCase(i.getDepartureAirportCode()))
-                    {
-                        f.add(i);
-                    }
-                }
-            }
-            System.out.println("With " + o.toString() + " " + f);
-        }
     }
 
     public Flight getFlightById(int id){
@@ -56,27 +36,11 @@ public class FlightRoute {
         return null;
     }
 
-    public void flightRoutesCalculator(Flight o){
-        /*  Calculates possible flight routes from a flight.
 
-            Takes into consideration only same airport destinations, not countries (requirement!).
+    public void sortByPrice(LinkedList<Flight> list){
+        /* Sorts from lowest to highest price from Flight.Price. */
 
-            TODO: check when airline does not match.
-            TODO: make it bidirectional for outbound & inbound flights.
-        */
-
-        LinkedList<Flight> f = new LinkedList<>();
-        for(Flight i: InBoundFlights){
-            if(o.getAirline().equalsIgnoreCase(i.getAirline())){
-                // checks departure locations are the same
-                if(o.getDepartureAirportCode().equalsIgnoreCase(i.getArrivalAirportCode()) &&
-                        o.getArrivalAirportCode().equalsIgnoreCase(i.getDepartureAirportCode()))
-                {
-                    f.add(i);
-                }
-            }
-        }
-        results = f;
+        list.sort(Comparator.comparingInt(Flight::getPrice));
     }
 
     public void print(String kind){
@@ -90,6 +54,7 @@ public class FlightRoute {
         else
             i = InBoundFlights.iterator();
 
+        System.out.println();
         while(i.hasNext()) {
             Flight f = i.next();
             System.out.println(f.toString());
@@ -97,10 +62,16 @@ public class FlightRoute {
 
     }
 
-    public void printCalculatorResult(){
-        for (Flight f : results) {
-            System.out.println(f.toString());
-        }
+    public LinkedList<Flight> getAllFlights() {
+        return AllFlights;
+    }
+
+    public LinkedList<Flight> getOutBoundFlights() {
+        return OutBoundFlights;
+    }
+
+    public LinkedList<Flight> getInBoundFlights() {
+        return InBoundFlights;
     }
 
     public static class Flight {
