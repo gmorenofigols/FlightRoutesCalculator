@@ -29,4 +29,11 @@ class FlightRoutesCalculatorControllerTest {
         Throwable exception = assertThrows(IllegalStateException.class, () -> controller.fetchData(mockupUrlInvalid));
         assertEquals("Request empty", exception.getMessage());
     }
+
+    /* TODO: add tests for:
+        getFlightById(wrong or non-existent id)
+        isSameAirline
+        isSameDestinations
+        flightRoutesCalculator -> expected results
+     */
 }
